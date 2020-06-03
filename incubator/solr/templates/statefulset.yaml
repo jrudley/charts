@@ -67,7 +67,7 @@ spec:
 {{- end }}
       initContainers:
         - name: check-zk
-          image: busybox:latest
+          image: busybox:1.28
           command:
             - 'sh'
             - '-c'
@@ -94,7 +94,7 @@ spec:
               echo "Did NOT see a ZK leader after 240 secs!";
               exit 1;
         - name: "cp-solr-xml"
-          image: busybox:latest
+          image: busybox:1.28
           command: ['sh', '-c', 'cp /tmp/solr.xml /tmp-config/solr.xml']
           volumeMounts:
             - name: "solr-xml"
