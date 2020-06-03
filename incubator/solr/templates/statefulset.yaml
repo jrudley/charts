@@ -118,6 +118,7 @@ spec:
               openssl "pkcs12" -export -inkey "/tmp/tls_secret/{{.Values.tls.certSecret.keyPath }}" -in "/tmp/tls_secret/{{.Values.tls.certSecret.certPath }}" -out "${PKCS12_OUTPUT}" -password "pass:${PASSWORD}"
               keytool -importkeystore -noprompt -srckeystore "${PKCS12_OUTPUT}" -srcstoretype "pkcs12" -destkeystore "${DEST_KEYSTORE}" -storepass "${PASSWORD}" -srcstorepass "${PASSWORD}"
 {{ if .Values.tls.importKubernetesCA }}
+              cd /tmp
               csplit -z -f crt- /var/run/secrets/kubernetes.io/serviceaccount/ca.crt '/-----BEGIN CERTIFICATE-----/' '{*}'
               for file in crt-*; do
                 keytool -import -noprompt -keystore "${TRUST_KEYSTORE}" -file "${file}" -storepass "${PASSWORD}" -alias service-$file;
@@ -125,6 +126,7 @@ spec:
               rm crt-*
 {{ end }}
 {{ if not (eq .Values.tls.caSecret.name "") }}
+              cd /tmp
               csplit -z -f crt- /tmp/tls_ca/{{ .Values.tls.caSecret.bundlePath }} '/-----BEGIN CERTIFICATE-----/' '{*}'
               for file in crt-*; do
                 keytool -import -noprompt -keystore "${TRUST_KEYSTORE}" -file "${file}" -storepass "${PASSWORD}" -alias service-$file;
